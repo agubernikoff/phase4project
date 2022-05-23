@@ -1,13 +1,107 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+body {
+  background-color: #133855;
+  position: relative;
+  margin: 0;
+  min-height: calc(100vh-60px);
+  padding-bottom: 8rem;
+}
+
+label,
+p,
+h1,
+h2,
+h3,
+h4,
+thead,
+tbody {
+  color: #a89bb9;
+  text-decoration: none;
+  font-family: pixel;
+}
+
+a {
+  color: #a89bb9;
+  font-family: pixel;
+}
+
+a:active,
+a:hover {
+  color: #ec904d;
+}
+
+input,
+select {
+  color: #133855;
+  text-decoration: none;
+  font-family: pixel;
+  background-color: #ec904d;
+  border-color: #ec904d;
+  margin-bottom: 10px;
+}
+
+strong {
+  color: #ec904d;
+  font-family: pixel;
+}
+
+td {
+  text-align: center;
+  font-family: pixel;
+}
+
+button {
+  border-color: #ec904d;
+  color: #ec904d;
+  background-color: transparent;
+  font-family: pixel;
+}
+
+@font-face {
+  font-family: pixel;
+  src: url(client/src/resources/PressStart2P-Regular.ttf);
+}
+
+.loading-div :first-child {
+  margin-right: 0;
+}
+
+h1 {
+  font-size: 3vw;
+}
+
+p,
+a {
+  font-size: 1.41vw;
+}
+
+label,
+input,
+select {
+  font-size: 1.13vw;
+}
+
+.footer-link {
+  font-size: 0.7vw;
+}
+
+h3 {
+  font-size: 1.4vw;
+}
+
+.rules:hover {
+  color: #ec904d;
 }
