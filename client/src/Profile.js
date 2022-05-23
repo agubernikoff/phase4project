@@ -96,7 +96,7 @@ function Profile({ user, handleLogout, updateUser, setUserOnProfile }) {
       </p>
     </div>
   ));
-  console.log(user.edits[0].location);
+
   return justToBeSure ? (
     <div
       style={{
@@ -227,7 +227,7 @@ function Profile({ user, handleLogout, updateUser, setUserOnProfile }) {
         ))}
       </form>
       <h3 style={{ textAlign: "center" }}>Activity</h3>
-      {edits}
+      {user.edits ? edits : null}
       <button
         onClick={areYouSure}
         style={{
