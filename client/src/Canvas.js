@@ -31,7 +31,6 @@ function Canvas({ addNewEditToUser }) {
 
     const handlers = {
       received(data) {
-        console.log(data);
         const updatedPixel = {
           color: data.new_color,
           id: data.pixel_id,
