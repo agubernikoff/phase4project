@@ -185,7 +185,6 @@ function Canvas({ addNewEditToUser }) {
           </p>
         </div>
       ) : null}
-      {messages}
       <h3
         className="rules"
         style={{
@@ -201,6 +200,7 @@ function Canvas({ addNewEditToUser }) {
       >
         Rules
       </h3>
+      {messages}
       <div
         style={{
           margin: "auto",
