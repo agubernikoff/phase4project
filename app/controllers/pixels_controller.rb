@@ -4,7 +4,6 @@ class PixelsController < ApplicationController
     end
 
     def contested_index
-        render json: Pixel.all.sort_by{|p| -p.edits.length}.take(10)
-        
+        render json: Pixel.all.sort_by{|p| -p.edits.length}.take(10),each_serializer: ContestedPixelSerializer
     end
 end
