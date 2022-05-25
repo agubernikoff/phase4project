@@ -8,6 +8,7 @@ function Canvas({ addNewEditToUser }) {
   const [hoveredPixel, setHoveredPixel] = useState("100x100");
   const [size, setSize] = useState("90vw");
   const [popUp, setPopUp] = useState(true);
+  const [edits, setEdits] = useState([]);
 
   useEffect(() => {
     fetch("/pixels")
@@ -20,11 +21,65 @@ function Canvas({ addNewEditToUser }) {
     const sorted = [...filtered, updatedPixel].sort((a, b) => a.id - b.id);
     setPixels(sorted);
   }
-
+  console.log("edits", edits);
+  const messages = edits.map((ue) => (
+    <div
+      key={ue.id}
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        width: "fit-content",
+        margin: "auto",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <img
+        src={ue.user.avatar}
+        alt={ue.user.username}
+        style={{ width: "2.5%" }}
+      />
+      <p style={{ textAlign: "center" }}>
+        {`${
+          ue.user.display_name ? ue.user.display_name : ue.user.username
+          // "1234567890123456789012345"
+        } changed Pixel ${ue.location} from`}{" "}
+      </p>
+      <div
+        style={{
+          backgroundColor: ue.old_color,
+          width: "1vw",
+          height: "1vw",
+          display: "inline-block",
+          marginLeft: "1vw",
+          marginRight: "1vw",
+        }}
+      ></div>
+      <p> to </p>
+      <div
+        style={{
+          backgroundColor: ue.new_color,
+          width: "1vw",
+          height: "1vw",
+          display: "inline-block",
+          marginLeft: "1vw",
+          marginRight: "1vw",
+        }}
+      ></div>
+      <p>
+        {" "}
+        on {`${new Date(ue.created_at).toLocaleDateString()}`} at{" "}
+        {`${new Date(ue.created_at).toLocaleTimeString(navigator.language, {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`}
+      </p>
+    </div>
+  ));
   useEffect(() => {
     const cable = createConsumer(
-      // "ws://localhost:3000/cable"
-      "wss://phase-4-project-pixel-app.herokuapp.com/cable"
+      "ws://localhost:3000/cable"
+      // "wss://phase-4-project-pixel-app.herokuapp.com/cable"
     );
 
     const paramsToSend = { channel: "EditChannel" };
@@ -32,11 +87,13 @@ function Canvas({ addNewEditToUser }) {
     const handlers = {
       received(data) {
         const updatedPixel = {
-          color: data.new_color,
-          id: data.pixel_id,
-          location: data.location,
+          color: data.edit.new_color,
+          id: data.edit.pixel_id,
+          location: data.edit.location,
         };
         updatePixels(updatedPixel);
+        console.log("tthtthisishdif", data);
+        setEdits([...edits, { ...data.edit, user: data.user }]);
       },
 
       connected() {
@@ -128,6 +185,7 @@ function Canvas({ addNewEditToUser }) {
           </p>
         </div>
       ) : null}
+      {messages}
       <h3
         className="rules"
         style={{

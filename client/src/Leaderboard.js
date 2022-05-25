@@ -22,7 +22,17 @@ function Leaderboard() {
     .slice(0, 10);
   const mappedUsers = sortedUsers.map((user) => (
     <tr key={user.id}>
-      <td className="table-user">{user.username}</td>
+      <td
+        className="table-user"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <img src={user.avatar} alt={user.username} style={{ width: "10%" }} />
+        {user.username}
+      </td>
       <td>{user.edits.length}</td>
     </tr>
   ));

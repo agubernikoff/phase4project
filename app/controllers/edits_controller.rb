@@ -15,7 +15,7 @@ rescue_from ActiveRecord::RecordInvalid,with: :render_unprocessable_entity
         elsif User.find(session[:user_id]).edits.empty? || Time.now> timeout
             new_edit= Edit.create!(user_id: session[:user_id],pixel_id: params[:id],location: params[:location],new_color: params[:color],old_color:pixel.color)
             pixel.update!(color: params[:color])
-            ActionCable.server.broadcast('channel5',new_edit)
+            ActionCable.server.broadcast('channel5',{edit:new_edit,user:User.find(session[:user_id])})
             render json: new_edit
         else render json:{errors: ["Too many attempts. Try again at","#{timeout}"]},status: 429
         end
