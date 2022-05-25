@@ -61,10 +61,12 @@ function EditForm({
 
   const x = selectedPixel.location.split("x")[1];
   const y = selectedPixel.location.split("x")[0];
-  const adjustRightSide = x >= 50 ? `${102 - x}vw` : null;
-  const adjustLeftSide = x >= 50 ? null : `${x}vw`;
-  const adjustBottom = y >= 65 ? `${102 - y}vw` : null;
-  const adjustTop = y >= 65 ? null : `${y}vw`;
+  console.log(Math.abs((x / 70) * 100 - 100));
+
+  const adjustRightSide = x >= 35 ? `${Math.abs((x / 70) * 100 - 101)}%` : null;
+  const adjustLeftSide = x >= 35 ? null : `${(x / 70) * 100}%`;
+  const adjustBottom = y >= 45 ? `${Math.abs((y / 70) * 100 - 102)}%` : null;
+  const adjustTop = y >= 45 ? null : `${(y / 70) * 100}%`;
   return (
     <div
       style={{

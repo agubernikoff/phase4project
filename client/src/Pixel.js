@@ -28,8 +28,8 @@ function Pixel({ pixel, updatePixels, setHoveredPixel, addNewEditToUser }) {
         className="pixel"
         style={{
           backgroundColor: color,
-          width: "1%",
-          height: "1%",
+          width: "1.428%",
+          height: "1.428%",
           display: "block",
           float: "left",
           outline: outline,
