@@ -54,6 +54,7 @@ function EditForm({
   const adjustLeftSide = x >= 35 ? null : `${(x / 70) * 100}%`;
   const adjustBottom = y >= 45 ? `${Math.abs((y / 70) * 100 - 102)}%` : null;
   const adjustTop = y >= 45 ? null : `${(y / 70) * 100}%`;
+  console.log(adjustRightSide);
   return (
     <div
       style={{
@@ -73,16 +74,51 @@ function EditForm({
       }}
     >
       <button
-        style={{
-          // float: "right",
-          textAlign: "center",
-          width: "fit-content",
-          height: "fit-content",
-          fontSize: "1vw",
-          position: "absolute",
-          right: 0,
-          marginBottom: ".1vw",
-        }}
+        style={
+          adjustBottom
+            ? adjustRightSide
+              ? {
+                  textAlign: "center",
+                  width: "fit-content",
+                  height: "fit-content",
+                  fontSize: "1vw",
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
+                  marginBottom: ".1vw",
+                }
+              : {
+                  // float: "right",
+                  textAlign: "center",
+                  width: "fit-content",
+                  height: "fit-content",
+                  fontSize: "1vw",
+                  position: "absolute",
+                  left: 0,
+                  bottom: 0,
+                  marginBottom: ".1vw",
+                }
+            : adjustRightSide
+            ? {
+                textAlign: "center",
+                width: "fit-content",
+                height: "fit-content",
+                fontSize: "1vw",
+                position: "absolute",
+                right: 0,
+                marginBottom: ".1vw",
+              }
+            : {
+                // float: "right",
+                textAlign: "center",
+                width: "fit-content",
+                height: "fit-content",
+                fontSize: "1vw",
+                position: "absolute",
+                left: 0,
+                marginBottom: ".1vw",
+              }
+        }
         onClick={closeEdit}
       >
         X
