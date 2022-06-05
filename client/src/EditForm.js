@@ -41,19 +41,6 @@ function EditForm({
           setErrors(err.errors);
         });
     });
-    // .then((data) => {
-    //   if (data.errors) {
-    //     setErrors(data.errors);
-    //   } else {
-    //     updatePixels({
-    //       color: data.new_color,
-    //       id: data.pixel_id,
-    //       location: data.location,
-    //     });
-    //     addNewEditToUser(data);
-    //     closeEdit(e);
-    //   }
-    // });
   }
   const errorMessage = errors[1]
     ? `${errors[0] + " " + new Date(errors[1]).toLocaleTimeString()}`

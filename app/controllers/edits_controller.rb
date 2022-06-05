@@ -21,6 +21,11 @@ rescue_from ActiveRecord::RecordInvalid,with: :render_unprocessable_entity
         end
     end
 
+    def message
+        # byebug
+        ActionCable.server.broadcast('channel5',{message: params[:message],user:User.find(session[:user_id])})
+    end
+
     private
 
     def render_unprocessable_entity invalid

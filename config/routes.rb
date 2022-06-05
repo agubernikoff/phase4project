@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   delete '/users', to: 'users#destroy'
   get '/contested_pixels', to: 'pixels#contested_index'
   get '/contested_users',to:'users#contested_index'
+  post '/send',to:'edits#message'
   # Routing logic: fallback requests for React Router.
   # Leave this here to help deploy your app later!
   mount ActionCable.server => '/cable'

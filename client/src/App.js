@@ -59,7 +59,7 @@ function App() {
         <Route
           exact
           path="/"
-          element={<Canvas addNewEditToUser={addNewEditToUser} />}
+          element={<Canvas addNewEditToUser={addNewEditToUser} user={user} />}
         />
         <Route
           exact

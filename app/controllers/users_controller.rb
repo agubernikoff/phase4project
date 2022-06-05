@@ -39,7 +39,8 @@ def create
   end
 
   def destroy
-    user = User.find(session[:user_id])
+    puts "#{params}"
+    user = User.find(params[:id])
     user.edits.update_all(user_id:nil)
     user.destroy
     session.delete :user_id

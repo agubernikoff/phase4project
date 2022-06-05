@@ -66,24 +66,16 @@ function Profile({ user, handleLogout, updateUser, setUserOnProfile }) {
         {`Changed Pixel ${ue.location} from`}{" "}
       </p>
       <div
+        className="edit-message-div"
         style={{
           backgroundColor: ue.old_color,
-          width: "1vw",
-          height: "1vw",
-          display: "inline-block",
-          marginLeft: "1vw",
-          marginRight: "1vw",
         }}
       ></div>
       <p> to </p>
       <div
+        className="edit-message-div"
         style={{
           backgroundColor: ue.new_color,
-          width: "1vw",
-          height: "1vw",
-          display: "inline-block",
-          marginLeft: "1vw",
-          marginRight: "1vw",
         }}
       ></div>
       <p>

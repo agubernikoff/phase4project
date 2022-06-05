@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import Pixel from "./Pixel";
 import Loading from "./Loading";
 import { createConsumer } from "@rails/actioncable";
+import { v4 as uuidv4 } from "uuid";
 
-function Canvas({ addNewEditToUser }) {
+function Canvas({ addNewEditToUser, user }) {
   const [pixels, setPixels] = useState([]);
   const [hoveredPixel, setHoveredPixel] = useState("100x100");
   const [size, setSize] = useState("90vw");
   const [popUp, setPopUp] = useState(true);
   const [edits, setEdits] = useState([]);
+  const [chat, setChat] = useState("");
+  const [expand, setExpand] = useState(false);
 
   useEffect(() => {
     fetch("/pixels")
@@ -21,79 +24,114 @@ function Canvas({ addNewEditToUser }) {
     const sorted = [...filtered, updatedPixel].sort((a, b) => a.id - b.id);
     setPixels(sorted);
   }
-  console.log("edits", edits);
+
   const messages = edits.map((ue) => (
     <div
-      key={ue.id}
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "fit-content",
-        margin: "auto",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      key={uuidv4()}
+      className={
+        ue.message
+          ? ue.user.id === user.id
+            ? "my-message"
+            : "your-message"
+          : "activity-update"
+      }
     >
-      <img
-        src={ue.user.avatar}
-        alt={ue.user.username}
-        style={{ width: "2.5%" }}
-      />
-      <p style={{ textAlign: "center" }}>
-        {`${
-          ue.user.display_name ? ue.user.display_name : ue.user.username
-          // "1234567890123456789012345"
-        } changed Pixel ${ue.location} from`}{" "}
-      </p>
       <div
-        style={{
-          backgroundColor: ue.old_color,
-          width: "1vw",
-          height: "1vw",
-          display: "inline-block",
-          marginLeft: "1vw",
-          marginRight: "1vw",
-        }}
-      ></div>
-      <p> to </p>
-      <div
-        style={{
-          backgroundColor: ue.new_color,
-          width: "1vw",
-          height: "1vw",
-          display: "inline-block",
-          marginLeft: "1vw",
-          marginRight: "1vw",
-        }}
-      ></div>
-      <p>
-        {" "}
-        on {`${new Date(ue.created_at).toLocaleDateString()}`} at{" "}
-        {`${new Date(ue.created_at).toLocaleTimeString(navigator.language, {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`}
-      </p>
+        className="message-user"
+        style={
+          ue.user.id === user.id && ue.message
+            ? {
+                flexDirection: "row-reverse",
+                marginLeft: ".7vw",
+              }
+            : {
+                flexDirection: "row",
+                marginRight: ".7vw",
+              }
+        }
+      >
+        <img
+          src={ue.user.avatar}
+          alt={ue.user.username}
+          style={{ width: "2vw" }}
+        />
+        <p>
+          {
+            ue.user.display_name ? ue.user.display_name : ue.user.username
+            // "1234567890123456789012345"
+          }{" "}
+        </p>
+        {ue.message ? <p>{":"}</p> : null}
+      </div>
+      {ue.message ? (
+        <p>"{ue.message}"</p>
+      ) : (
+        <>
+          <p style={{ textAlign: "center" }}>
+            {`changed Pixel ${ue.location} from`}{" "}
+          </p>
+          <div
+            className="edit-message-div"
+            style={{
+              backgroundColor: ue.old_color,
+            }}
+          ></div>
+          <p> to </p>
+          <div
+            className="edit-message-div"
+            style={{
+              backgroundColor: ue.new_color,
+            }}
+          ></div>
+          <p>
+            {" "}
+            on {`${new Date(ue.created_at).toLocaleDateString()}`} at{" "}
+            {`${new Date(ue.created_at).toLocaleTimeString(navigator.language, {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`}
+          </p>
+        </>
+      )}
     </div>
   ));
+
+  // const activity = document.getElementsByClassName("chat")[0];
+
+  // const activityExpand = document.getElementsByClassName("chat-expand")[0];
+  // const activity = useEffect(() => {
+  //   document.getElementsByClassName("chat-container")[0].lastChild;
+  //   // return activity;
+  // });
+  // console.log(activity);
   useEffect(() => {
     const cable = createConsumer(
-      // "ws://localhost:3000/cable"
-      "wss://phase-4-project-pixel-app.herokuapp.com/cable"
+      "ws://localhost:3000/cable"
+      // "wss://phase-4-project-pixel-app.herokuapp.com/cable"
     );
 
     const paramsToSend = { channel: "EditChannel" };
 
     const handlers = {
       received(data) {
-        const updatedPixel = {
-          color: data.edit.new_color,
-          id: data.edit.pixel_id,
-          location: data.edit.location,
-        };
-        updatePixels(updatedPixel);
         console.log("tthtthisishdif", data);
-        setEdits([...edits, { ...data.edit, user: data.user }]);
+        if (!data.message) {
+          const updatedPixel = {
+            color: data.edit.new_color,
+            id: data.edit.pixel_id,
+            location: data.edit.location,
+          };
+          updatePixels(updatedPixel);
+        }
+        setEdits([
+          ...edits,
+          { ...data.edit, user: data.user, message: data.message },
+        ]);
+        document.getElementsByClassName("chat-container")[0].lastChild.scroll({
+          top: document.getElementsByClassName("chat-container")[0].lastChild
+            .scrollHeight,
+          behavior: "smooth",
+        });
       },
 
       connected() {
@@ -111,8 +149,6 @@ function Canvas({ addNewEditToUser }) {
       subscription.unsubscribe();
     };
   });
-
-  console.log(pixels);
 
   const mappedpixels = pixels.map((p) => (
     <Pixel
@@ -137,6 +173,13 @@ function Canvas({ addNewEditToUser }) {
     setPopUp(false);
   }
 
+  function sendChat() {
+    fetch("/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: chat }),
+    });
+  }
   return (
     <div
       className="canvas"
@@ -185,22 +228,126 @@ function Canvas({ addNewEditToUser }) {
           </p>
         </div>
       ) : null}
-      <h3
-        className="rules"
-        style={{
-          textAlign: "center",
-          cursor: "pointer",
-          textDecoration: "underline",
-          display: "block",
-          margin: "auto",
-          marginBottom: 15,
-          width: "fit-content",
-        }}
-        onClick={() => setPopUp(true)}
-      >
+      <h3 className="rules" onClick={() => setPopUp(true)}>
         Rules
       </h3>
-      {messages}
+      <div className="chat-container">
+        <h3
+          className="rules"
+          onClick={() => {
+            setExpand(!expand);
+            if (expand) {
+              setTimeout(() => {
+                document
+                  .getElementsByClassName("chat-container")[0]
+                  .lastChild.scroll({
+                    top: document.getElementsByClassName("chat-container")[0]
+                      .lastChild.scrollHeight,
+                  });
+              }, 10);
+            }
+          }}
+        >
+          Activity
+        </h3>
+        <div className={expand ? "chat" : "chat-expand"}>
+          {expand ? (
+            <>
+              {messages}
+              <div className="chat-input">
+                <input
+                  value={chat}
+                  onChange={(e) => setChat(e.target.value)}
+                ></input>
+                <button onClick={() => sendChat()}>chat</button>
+              </div>
+            </>
+          ) : (
+            // ) : (edits[0] ? (
+            //   <div
+            //     className={
+            //       edits[edits.length - 1].message
+            //         ? edits[edits.length - 1].user.id === user.id
+            //           ? "my-message"
+            //           : "your-message"
+            //         : "activity-update"
+            //     }
+            //   >
+            //     <div
+            //       className="message-user"
+            //       style={
+            //         edits[edits.length - 1].user.id === user.id &&
+            //         edits[edits.length - 1].message
+            //           ? {
+            //               flexDirection: "row-reverse",
+            //               marginLeft: ".7vw",
+            //             }
+            //           : {
+            //               flexDirection: "row",
+            //               marginRight: ".7vw",
+            //             }
+            //       }
+            //     >
+            //       <img
+            //         src={edits[edits.length - 1].user.avatar}
+            //         alt={edits[edits.length - 1].user.username}
+            //         style={{ width: "2vw" }}
+            //       />
+            //       <p>
+            //         {
+            //           edits[edits.length - 1].user.display_name
+            //             ? edits[edits.length - 1].user.display_name
+            //             : edits[edits.length - 1].user.username
+            //           // "1234567890123456789012345"
+            //         }{" "}
+            //       </p>
+            //       {edits[edits.length - 1].message ? <p>{":"}</p> : null}
+            //     </div>
+            //     {edits[edits.length - 1].message ? (
+            //       <p>"{edits[edits.length - 1].message}"</p>
+            //     ) : (
+            //       <>
+            //         <p style={{ textAlign: "center" }}>
+            //           {`changed Pixel ${edits[edits.length - 1].location} from`}{" "}
+            //         </p>
+            //         <div
+            //           className="edit-message-div"
+            //           style={{
+            //             backgroundColor: edits[edits.length - 1].old_color,
+            //           }}
+            //         ></div>
+            //         <p> to </p>
+            //         <div
+            //           className="edit-message-div"
+            //           style={{
+            //             backgroundColor: edits[edits.length - 1].new_color,
+            //           }}
+            //         ></div>
+            //         <p>
+            //           {" "}
+            //           on{" "}
+            //           {`${new Date(
+            //             edits[edits.length - 1].created_at
+            //           ).toLocaleDateString()}`}{" "}
+            //           at{" "}
+            //           {`${new Date(
+            //             edits[edits.length - 1].created_at
+            //           ).toLocaleTimeString(navigator.language, {
+            //             hour: "2-digit",
+            //             minute: "2-digit",
+            //           })}`}
+            //         </p>
+            //       </>
+            //     )}
+            //   </div>
+            // ) :
+            <>
+              <p>No messages yet...</p>
+              {messages}
+            </>
+          )}
+        </div>
+      </div>
       <div
         style={{
           margin: "auto",
