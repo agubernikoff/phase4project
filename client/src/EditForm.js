@@ -50,8 +50,8 @@ function EditForm({
   const y = selectedPixel.location.split("x")[0];
   console.log(Math.abs((x / 70) * 100 - 100));
 
-  const adjustRightSide = x >= 35 ? `${Math.abs((x / 70) * 100 - 101)}%` : null;
-  const adjustLeftSide = x >= 35 ? null : `${(x / 70) * 100}%`;
+  const adjustRightSide = x > 35 ? `${Math.abs((x / 70) * 100 - 101)}%` : null;
+  const adjustLeftSide = x > 35 ? null : `${(x / 70) * 100}%`;
   const adjustBottom = y >= 45 ? `${Math.abs((y / 70) * 100 - 102)}%` : null;
   const adjustTop = y >= 45 ? null : `${(y / 70) * 100}%`;
   console.log(adjustRightSide);
