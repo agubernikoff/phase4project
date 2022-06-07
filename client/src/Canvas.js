@@ -106,8 +106,8 @@ function Canvas({ addNewEditToUser, user }) {
   // console.log(activity);
   useEffect(() => {
     const cable = createConsumer(
-      // "ws://localhost:3000/cable"
-      "wss://phase-4-project-pixel-app.herokuapp.com/cable"
+      "ws://localhost:3000/cable"
+      // "wss://phase-4-project-pixel-app.herokuapp.com/cable"
     );
 
     const paramsToSend = { channel: "EditChannel" };
@@ -179,6 +179,7 @@ function Canvas({ addNewEditToUser, user }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: chat }),
     });
+    setChat("");
   }
   return (
     <div
@@ -259,7 +260,7 @@ function Canvas({ addNewEditToUser, user }) {
                   value={chat}
                   onChange={(e) => setChat(e.target.value)}
                 ></input>
-                <button onClick={() => sendChat()}>chat</button>
+                <button onClick={() => sendChat()}>send</button>
               </div>
             </>
           ) : (
