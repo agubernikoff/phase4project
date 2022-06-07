@@ -132,6 +132,7 @@ function Canvas({ addNewEditToUser, user }) {
             .scrollHeight,
           behavior: "smooth",
         });
+        setChat("");
       },
 
       connected() {
@@ -179,7 +180,6 @@ function Canvas({ addNewEditToUser, user }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: chat }),
     });
-    setTimeout(() => setChat(""), 100);
   }
   return (
     <div
