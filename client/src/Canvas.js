@@ -179,7 +179,7 @@ function Canvas({ addNewEditToUser, user }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: chat }),
     });
-    setChat("");
+    setTimeout(() => setChat(""), 100);
   }
   return (
     <div
