@@ -125,7 +125,7 @@ h3 {
   position: fixed;
   bottom: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 4;
 }
 .chat {
   border: thick ridge #ec904d;
