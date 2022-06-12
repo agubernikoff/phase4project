@@ -106,8 +106,8 @@ function Canvas({ addNewEditToUser, user }) {
   // console.log(activity);
   useEffect(() => {
     const cable = createConsumer(
-      "ws://localhost:3000/cable"
-      // "wss://phase-4-project-pixel-app.herokuapp.com/cable"
+      // "ws://localhost:3000/cable"
+      "wss://phase-4-project-pixel-app.herokuapp.com/cable"
     );
 
     const paramsToSend = { channel: "EditChannel" };
