@@ -65,7 +65,7 @@ function EditForm({
         display: "block",
         margin: "auto",
         marginTop: 10,
-        zIndex: 10,
+        zIndex: 3,
         position: "absolute",
         top: adjustTop,
         bottom: adjustBottom,
