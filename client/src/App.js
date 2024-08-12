@@ -6,9 +6,63 @@ import Header from "./Header";
 import Leaderboard from "./Leaderboard";
 import Profile from "./Profile";
 import Footer from "./Footer";
+import { createConsumer } from "@rails/actioncable";
+import { useDispatch } from "react-redux";
+import { pixelsActions } from "./store/pixels-slice";
 
 function App() {
+  const dispatch = useDispatch();
   const [user, setUser] = useState("");
+
+  useEffect(() => {
+    const cable = createConsumer(
+      "ws://192.168.1.71:3000/cable"
+      // "wss://phase-4-project-pixel-app.herokuapp.com/cable"
+    );
+
+    const paramsToSend = { channel: "EditChannel" };
+
+    const handlers = {
+      received(data) {
+        console.log("tthtthisishdif", data);
+        if (!data.message) {
+          const updatedPixel = {
+            color: data.edit.new_color,
+            id: data.edit.pixel_id,
+            location: data.edit.location,
+          };
+          dispatch(pixelsActions.updatePixels(updatedPixel));
+        }
+        dispatch(
+          pixelsActions.setEdits({
+            ...data.edit,
+            user: data.user,
+            message: data.message,
+          })
+        );
+        document.getElementsByClassName("chat-container")[0].lastChild.scroll({
+          top: document.getElementsByClassName("chat-container")[0].lastChild
+            .scrollHeight,
+          behavior: "smooth",
+        });
+        dispatch(pixelsActions.setChat(""));
+      },
+
+      connected() {
+        console.log("connected");
+      },
+
+      disconnected() {
+        console.log("disconnected");
+      },
+    };
+
+    const subscription = cable.subscriptions.create(paramsToSend, handlers);
+
+    return function cleanup() {
+      subscription.unsubscribe();
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     fetch("/me").then((r) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EditForm from "./EditForm";
 
-function Pixel({ pixel, updatePixels, setHoveredPixel, addNewEditToUser }) {
+function Pixel({ pixel, setHoveredPixel, addNewEditToUser }) {
   const [outline, setOutline] = useState("");
   const [selectedPixel, setSelectedPixel] = useState("");
   const [color, setColor] = useState(pixel.color);
@@ -54,7 +54,6 @@ function Pixel({ pixel, updatePixels, setHoveredPixel, addNewEditToUser }) {
         <EditForm
           selectedPixel={selectedPixel}
           closeEdit={closeEdit}
-          updatePixels={updatePixels}
           color={color}
           setColor={setColor}
           addNewEditToUser={addNewEditToUser}

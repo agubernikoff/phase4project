@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Pixel from "./Pixel";
 import Loading from "./Loading";
-import { createConsumer } from "@rails/actioncable";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector, useDispatch } from "react-redux";
+import { pixelsActions } from "./store/pixels-slice";
 
 function Canvas({ addNewEditToUser, user }) {
-  const [pixels, setPixels] = useState([]);
+  const dispatch = useDispatch();
+  const pixels = useSelector((state) => state.pixels.pixels);
   const [hoveredPixel, setHoveredPixel] = useState("100x100");
   const [size, setSize] = useState("90vw");
   const [popUp, setPopUp] = useState(true);
-  const [edits, setEdits] = useState([]);
-  const [chat, setChat] = useState("");
+  const edits = useSelector((state) => state.pixels.edits);
+  const chat = useSelector((state) => state.pixels.chat);
   const [expand, setExpand] = useState(false);
 
   useEffect(() => {
     fetch("/pixels")
       .then((r) => r.json())
-      .then((data) => setPixels(data));
-  }, []);
-
-  function updatePixels(updatedPixel) {
-    const filtered = [...pixels].filter((p) => p.id !== updatedPixel.id);
-    const sorted = [...filtered, updatedPixel].sort((a, b) => a.id - b.id);
-    setPixels(sorted);
-  }
+      .then((data) => dispatch(pixelsActions.setPixels(data)));
+  }, [dispatch]);
 
   const messages = edits.map((ue) => (
     <div
@@ -104,58 +100,11 @@ function Canvas({ addNewEditToUser, user }) {
   //   // return activity;
   // });
   // console.log(activity);
-  useEffect(() => {
-    const cable = createConsumer(
-      // "ws://localhost:3000/cable"
-      "wss://phase-4-project-pixel-app.herokuapp.com/cable"
-    );
-
-    const paramsToSend = { channel: "EditChannel" };
-
-    const handlers = {
-      received(data) {
-        console.log("tthtthisishdif", data);
-        if (!data.message) {
-          const updatedPixel = {
-            color: data.edit.new_color,
-            id: data.edit.pixel_id,
-            location: data.edit.location,
-          };
-          updatePixels(updatedPixel);
-        }
-        setEdits([
-          ...edits,
-          { ...data.edit, user: data.user, message: data.message },
-        ]);
-        document.getElementsByClassName("chat-container")[0].lastChild.scroll({
-          top: document.getElementsByClassName("chat-container")[0].lastChild
-            .scrollHeight,
-          behavior: "smooth",
-        });
-        setChat("");
-      },
-
-      connected() {
-        console.log("connected");
-      },
-
-      disconnected() {
-        console.log("disconnected");
-      },
-    };
-
-    const subscription = cable.subscriptions.create(paramsToSend, handlers);
-
-    return function cleanup() {
-      subscription.unsubscribe();
-    };
-  });
 
   const mappedpixels = pixels.map((p) => (
     <Pixel
       key={p.id}
       pixel={p}
-      updatePixels={updatePixels}
       setHoveredPixel={setHoveredPixel}
       addNewEditToUser={addNewEditToUser}
     />
@@ -258,7 +207,9 @@ function Canvas({ addNewEditToUser, user }) {
               <div className="chat-input">
                 <input
                   value={chat}
-                  onChange={(e) => setChat(e.target.value)}
+                  onChange={(e) =>
+                    dispatch(pixelsActions.setChat(e.target.value))
+                  }
                 ></input>
                 <button onClick={() => sendChat()}>send</button>
               </div>

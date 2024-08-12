@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
+import { useDispatch } from "react-redux";
+import { pixelsActions } from "./store/pixels-slice";
 
 function EditForm({
   selectedPixel,
   closeEdit,
-  updatePixels,
   color,
   setColor,
   addNewEditToUser,
 }) {
+  const dispatch = useDispatch();
   const [errors, setErrors] = useState("");
 
   function onSubmit(e) {
@@ -27,11 +29,13 @@ function EditForm({
       if (r.ok)
         r.json().then((data) => {
           console.log(data);
-          updatePixels({
-            color: data.new_color,
-            id: data.pixel_id,
-            location: data.location,
-          });
+          dispatch(
+            pixelsActions.updatePixels({
+              color: data.new_color,
+              id: data.pixel_id,
+              location: data.location,
+            })
+          );
           addNewEditToUser(data);
           closeEdit(e);
         });
